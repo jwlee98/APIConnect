@@ -22,5 +22,10 @@
 
 
 * IBM API Connect 관련 다양한 한글 자료
-* IBM API Connect 에서 바로 수행가능한 API 들(yaml 포멧)
+* IBM API Connect 에서 바로 수행가능한 API 들(Swagger 2.0 포멧)
 * IBM API Connect 의 기능을 확장한 User policy 들
+
+
+|폴더명|제공내용|기타|
+|:---:|:---:|:---:|
+|Test API List|바로 테스트/참고 가능한 API 리스트들|다양한 Assemble 기능 사용 가이드|
