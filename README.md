@@ -1,8 +1,11 @@
 ## IBM API Connect 관련 내용 정리
 
+
 ### 본 공간은 IBM API Connect 관련해서 다양한 자료를 자유롭게 공유하는 자리입니다.
 
+
 **본 자료는 자유롭게 사용가능하지만 출처는 명시해주세요**
+
 
 > **[참고]** 우선적으로 IBM API Connect 에 대해서 간단한 소개를 드리자면 현대의 디지털 애플리케이션의 핵심인 기업 수준의 API 와 Microservices 를 위한 통합된 생성, 실행, 관리 및 보안에 대한 기반을 제공하는 API 플랫폼으로 생각하시면 됩니다. 일반적으로 이러한 솔루션을 시장에서는 API 관리(Management) or 플랫폼이라고 이야기 합니다.
 >
@@ -14,7 +17,9 @@
 >
 > [참고사이트](http://www.websphere.pe.kr/xe/index.php?mid=new_lecture&page=2&document_srl=56058)
 
+
 우선 본 공간에서는 다음과 같은 자료를 공유할 예정입니다.
+
 
 * IBM API Connect 관련 다양한 한글 자료
 * IBM API Connect 에서 바로 수행가능한 API 들(yaml 포멧)
