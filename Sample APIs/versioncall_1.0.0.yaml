@@ -1,0 +1,114 @@
+---
+swagger: "2.0"
+info:
+  x-ibm-name: "versioncall"
+  title: "VersionCall"
+  version: "1.0.0"
+  description: "## MRO 비율 조회 API\n> ## 입력값을 가지고 MRO 비율을 조회하는 것이 가능\n\n> ### 입력 값은\
+    \ MRO 금액, 이자율, 기간으로 이루어짐\n\n|파라미터명|Type|예시|\n|:---:|:---:|:---:|\n|loanAmount|integer|MRO비\
+    율|\n|annualInterestRate|number|이자율|\n|termInMonths|integer|기간|"
+  contact:
+    name: "이정운"
+    email: "juwlee@kr.ibm.com"
+    url: "www.websphere.pe.kr"
+  termsOfService: "무료 라이센"
+schemes:
+- "https"
+basePath: "/versioncall"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+securityDefinitions:
+  clientIdHeader:
+    type: "apiKey"
+    in: "header"
+    name: "X-IBM-Client-Id"
+security:
+- clientIdHeader: []
+x-ibm-configuration:
+  testable: true
+  enforced: true
+  cors:
+    enabled: true
+  assembly:
+    execute:
+    - ip-validate:
+        version: "1.0"
+        whitelist: "192.168.225.1"
+    - invoke:
+        target-url: "http://192.168.225.1:8080/loans/v1/quote?loanAmount={loanAmount}&annualInterestRate={annualInterestRate}&termInMonths={termInMonths}"
+        verb: "GET"
+  phase: "realized"
+  properties:
+    targetURL:
+      value: "http://192.168.225.10:9071"
+      description: ""
+      encoded: false
+  catalogs:
+    Sandbox:
+      properties:
+        targetURL: "http://192.168.225.10:9071"
+    apic-dev:
+      properties:
+        targetURL: "http://192.168.225.10:9081"
+  categories:
+  - "/Korea/MRO"
+  - "/EU/MRO"
+paths:
+  /call:
+    get:
+      responses:
+        200:
+          description: "200 OK"
+          schema:
+            $ref: "#/definitions/loanResponse"
+      parameters:
+      - name: "loanAmount"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "대출금"
+        format: "int32"
+      - name: "annualInterestRate"
+        type: "number"
+        required: true
+        in: "query"
+        description: "이자율"
+        format: "float"
+      - name: "termInMonths"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "대출기간"
+        format: "int32"
+definitions:
+  loanResponse:
+    properties:
+      loanAmount:
+        type: "integer"
+        format: "int32"
+        example: 10000
+      annualInterestRate:
+        type: "number"
+        format: "float"
+        example: 0.1
+      termInMonths:
+        type: "integer"
+        format: "int32"
+        example: 52
+      monthlyPaymentAmount:
+        type: "number"
+        format: "float"
+        example: 123.45
+    required:
+    - "loanAmount"
+    - "termInMonths"
+    - "monthlyPaymentAmount"
+    - "annualInterestRate"
+    additionalProperties: false
+tags: []
+externalDocs:
+  description: "외부 자료 없음"
+  url: "http://192.168.225.10:9071/home/"
+host: "192.168.225.52:443"
