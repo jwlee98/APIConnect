@@ -9,6 +9,7 @@
 |:---:|:---:|:---:|
 |testapi_1.0.0.yaml|간단한 샘플 API|기본 호출만 존재|
 |testloan_2.0.0.yaml|간단한 샘플 API|간단한 정책 테스트 API|
+|oauth-2leg_1.0.0.yaml|OAuth 2.0 정의 API|간단한 OAuth 2.0 테스트 API 로서 authtest3_3.0.0.yaml 에서 사용|
 ||||
 ||||
 |LoanTest.zip|API 호출 대상이 되는 간단한 샘플 App|JAX-RS 샘플 App|
@@ -23,6 +24,12 @@
  > testloan_2.0.0.yaml
  
  ![testloan_2.0.0.yaml](./images/testloan.jpg)
+
+ 
+ > oauth-2leg_1.0.0.yaml
+ > OAuth 2.0 보안 정의 - Confidential, Password flow, refresh token, revocation
+ 
+ ![oauth-2leg_1.0.0.yaml](./images/oauth2.jpg)
 
 
   

@@ -1,0 +1,89 @@
+---
+swagger: "2.0"
+info:
+  x-ibm-name: "authtest3"
+  title: "AuthTest3"
+  version: "3.0.0"
+  description: "# 대출금 조회 API\n> ## 입력값을 가지고 대출금을 조회하는 것이 가능\n\n> ### 입력 값은 대출금, 이자\
+    율, 대출기간으로 이루어짐\n\n|파라미터명|Type|예시|\n|:---:|:---:|:---:|\n|loanAmount|integer|대출\
+    금|\n|annualInterestRate|number|이자율|\n|termInMonths|integer|대출기간|"
+schemes:
+- "https"
+basePath: "/authtest3"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+securityDefinitions:
+  oauth-1:
+    type: "oauth2"
+    description: ""
+    flow: "password"
+    scopes:
+      authtest3: "authtest3"
+    tokenUrl: "https://192.168.225.52/apic/sb/oauth20/token"
+  clientIdHeader:
+    type: "apiKey"
+    in: "header"
+    name: "X-IBM-Client-Id"
+security:
+- oauth-1:
+  - "authtest3"
+  clientIdHeader: []
+x-ibm-configuration:
+  testable: true
+  enforced: true
+  cors:
+    enabled: true
+  assembly:
+    execute:
+    - activity-log:
+        title: "activity-log"
+        content: "activity"
+        error-content: "payload"
+    - operation-switch:
+        title: "operation-switch"
+        case:
+        - operations:
+          - verb: "get"
+            path: "/SimpleCall"
+          execute:
+          - invoke:
+              target-url: "http://192.168.225.1:8080/loans/v1/quote?loanAmount={loanAmount}&annualInterestRate={annualInterestRate}&termInMonths={termInMonths}"
+              title: "invoke_put"
+              verb: "GET"
+        otherwise: []
+  gateway: "datapower-gateway"
+  phase: "realized"
+paths:
+  /SimpleCall:
+    get:
+      responses:
+        200:
+          description: "200 OK"
+          schema:
+            type: "object"
+      parameters:
+      - name: "loanAmount"
+        type: "number"
+        required: true
+        in: "query"
+        description: "대출금"
+        format: "float"
+      - name: "annualInterestRate"
+        type: "number"
+        required: true
+        in: "query"
+        description: "이자율"
+        format: "float"
+      - name: "termInMonths"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "대출기간"
+        format: "int32"
+      security:
+      - oauth-1:
+        - "authtest3"
+        clientIdHeader: []
+tags: []
