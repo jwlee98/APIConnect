@@ -27,6 +27,7 @@
 
  
  > oauth-2leg_1.0.0.yaml
+ >
  > OAuth 2.0 보안 정의 - Confidential, Password flow, refresh token, revocation
  
  ![oauth-2leg_1.0.0.yaml](./images/oauth2.jpg)
