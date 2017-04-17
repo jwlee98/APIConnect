@@ -8,7 +8,7 @@
 |파일명|제공내용|기타|
 |:---:|:---:|:---:|
 |testapi_1.0.0.yaml|간단한 샘플 API|기본 호출만 존재|
-|testloan_2.0.0.yaml|간단한 샘플 API|간단한 정책 테스트 API|
+|testloan_2.0.0.yaml|간단한 샘플 API|다양한 정책 테스트 API|
 |oauth-2leg_1.0.0.yaml|OAuth 2.0 정의 API|간단한 OAuth 2.0 테스트 API 로서 authtest3_3.0.0.yaml 에서 사용|
 |sampleweb_1.0.0.yaml|wsdl 기반으로 Web Service 를 바로 REST 로 변환하는 API||
 |versioncall_1.0.0.yaml|사용자 정의 정책 사용하는 API|ip-validate-policy.zip 사용|
