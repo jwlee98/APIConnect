@@ -1,0 +1,171 @@
+---
+swagger: "2.0"
+info:
+  x-ibm-name: "testapi"
+  title: "TestAPI"
+  version: "1.0.0"
+  description: "# 대출금 조회 API\n> ## 입력값을 가지고 대출금을 조회하는 것이 가능\n\n> ### 입력 값은 대출금, 이자\
+    율, 대출기간으로 이루어짐\n\n|파라미터명|Type|예시|\n|:---:|:---:|:---:|\n|loanAmount|integer|대출\
+    금|\n|annualInterestRate|number|이자율|\n|termInMonths|integer|대출기간|"
+  contact:
+    name: "이정운"
+    email: "apic@localhost.com"
+    url: "www.websphere.pe.kr"
+  termsOfService: "해당 API 는 무상으로 테스트 가능한 API 입니다."
+  license:
+    name: "GPL 2.0"
+schemes:
+- "https"
+host: "$(catalog.host)"
+basePath: "/testapi"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+securityDefinitions:
+  clientIdHeader:
+    type: "apiKey"
+    in: "header"
+    name: "X-IBM-Client-Id"
+security:
+- clientIdHeader: []
+x-ibm-configuration:
+  testable: true
+  enforced: true
+  cors:
+    enabled: true
+  assembly:
+    execute:
+    - activity-log:
+        title: "activity-log"
+        content: "payload"
+        error-content: "payload"
+        version: "1.0.0"
+    - operation-switch:
+        title: "operation-switch"
+        case:
+        - operations:
+          - verb: "get"
+            path: "/loanCall"
+          execute:
+          - invoke:
+              target-url: "http://192.168.225.10:9071/loans/v1/quote?loanAmount={loanAmount}&annualInterestRate={annualInterestRate}&termInMonths={termInMonths}"
+              title: "Invoke_GET"
+              verb: "GET"
+        - operations:
+          - verb: "put"
+            path: "/loanCall"
+          execute:
+          - validate:
+              title: "validate"
+              version: "1.0.0"
+              definition: "request"
+          - invoke:
+              target-url: "http://192.168.225.10:9071/loans/v1/quote?loanAmount=$(request.body.loanAmount)&annualInterestRate=$(request.body.annualInterestRate)&termInMonths=$(request.body.termInMonths)"
+              title: "Invoke_PUT"
+              verb: "GET"
+        otherwise: []
+        version: "1.0.0"
+  phase: "realized"
+  properties:
+    targerURL:
+      value: "http://192.168.225.10:9071"
+      description: ""
+      encoded: false
+  catalogs:
+    apic-dev:
+      properties:
+        targerURL: "http://192.168.225.10:9091"
+    Sandbox:
+      properties:
+        targerURL: "http://192.168.225.10:9071"
+paths:
+  /loanCall:
+    get:
+      responses:
+        200:
+          description: "200 OK"
+          schema:
+            $ref: "#/definitions/loanResponse"
+      description: "GET : 대출금에 대한 월별 비용 반환하는 API"
+      parameters:
+      - name: "loanAmount"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "대출금"
+        format: "int32"
+      - name: "annualInterestRate"
+        type: "number"
+        required: true
+        in: "query"
+        description: "이자율"
+        format: "float"
+      - name: "termInMonths"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "대출기간"
+        format: "int32"
+    put:
+      responses:
+        200:
+          description: "200 OK"
+          schema:
+            $ref: "#/definitions/loanResponse"
+      description: "PUT : 대출금에 대한 월별 비용 반환하는 API"
+      parameters:
+      - name: "requestLoan"
+        required: true
+        in: "body"
+        schema:
+          $ref: "#/definitions/requestLoan"
+        description: "data"
+definitions:
+  requestLoan:
+    properties:
+      loanAmounT:
+        type: "integer"
+        format: "int32"
+        example: 10000
+        minimum: 0
+      annualInterestRate:
+        type: "number"
+        format: "float"
+        example: 0.1
+      termInMonths:
+        type: "integer"
+        format: "int32"
+        example: 52
+    required:
+    - "annualInterestRate"
+    - "termInMonths"
+    - "loanAmounT"
+    additionalProperties: true
+  loanResponse:
+    properties:
+      loanAmount:
+        type: "integer"
+        format: "int32"
+        example: 10000
+      annualInterestRate:
+        type: "number"
+        format: "float"
+        example: 0.1
+      termInMonths:
+        type: "integer"
+        format: "int32"
+        example: 52
+      monthlyPaymentAmount:
+        type: "number"
+        format: "float"
+        example: 123.45
+    required:
+    - "loanAmount"
+    - "termInMonths"
+    - "monthlyPaymentAmount"
+    additionalProperties: false
+tags: []
+externalDocs:
+  description: "보다 상세한 내용은 서비스 내용을 참고하시기 바라겠습니다."
+  url: "http://192.168.225.10:9071/home/"

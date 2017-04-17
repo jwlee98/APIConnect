@@ -1,0 +1,434 @@
+---
+swagger: "2.0"
+info:
+  version: "2.0.0"
+  title: "MRO-Ratio"
+  x-ibm-name: "testloan"
+  description: "## 대출금 조회 API\n\n> ### 입력값을 가지고 대출금을 조회하는 것이 가능\n> ### 입력 값은 대출금,\
+    \ 이자 율, 대출기간으로 이루어짐\n\n|파라미터명|Type|예시|\n|:---:|:---:|:---:|\n|loanAmount|integer|대\
+    출금|\n|annualInterestRate|number|이자율|\n|termInMonths|integer|대출기간|"
+  contact:
+    name: "이정운"
+    email: "admin@localhost.com"
+    url: "http://www.websphere.pe.kr"
+  termsOfService: "무상으로 사용 가능함"
+basePath: "/testLoan"
+paths:
+  /returnXML:
+    get:
+      responses:
+        200:
+          description: "200 OK"
+      parameters:
+      - name: "loanAmount"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "대출금"
+        format: "int32"
+      - name: "annualInterestRate"
+        type: "number"
+        required: true
+        in: "query"
+        description: "이자율"
+        format: "float"
+      - name: "termInMonths"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "대출기간"
+        format: "int32"
+  /decryptCall:
+    put:
+      responses:
+        200:
+          description: "200 OK"
+      parameters:
+      - name: "encryptRequest"
+        required: true
+        in: "body"
+        schema:
+          $ref: "#/definitions/requestLoan"
+  /encryptCall:
+    get:
+      responses:
+        200:
+          description: "200 OK"
+      parameters:
+      - name: "loanAmount"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "대출금"
+        format: "int32"
+      - name: "annualInterestRate"
+        type: "number"
+        required: true
+        in: "query"
+        description: "이자율"
+        format: "float"
+      - name: "termInMonths"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "대출기간"
+        format: "int32"
+  /addCall:
+    get:
+      responses:
+        200:
+          description: "200 OK"
+      parameters:
+      - name: "loanAmount"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "대출금"
+        format: "int32"
+      - name: "annualInterestRate"
+        type: "number"
+        required: true
+        in: "query"
+        description: "이자율"
+        format: "float"
+      - name: "termInMonths"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "대출기간"
+        format: "int32"
+  /removeCall:
+    get:
+      responses:
+        200:
+          description: "200 OK"
+      parameters:
+      - name: "loanAmount"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "대출금"
+        format: "int32"
+      - name: "annualInterestRate"
+        type: "number"
+        required: true
+        in: "query"
+        description: "이자율"
+        format: "float"
+      - name: "termInMonths"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "대출기간"
+        format: "int32"
+  /validCall:
+    post:
+      responses:
+        200:
+          description: "200 OK"
+      description: "> JSON 스키마 검증후 요청"
+      parameters:
+      - name: "requestLoan"
+        required: true
+        in: "body"
+        schema:
+          $ref: "#/definitions/requestLoan"
+  /call:
+    get:
+      responses:
+        200:
+          description: "200 OK"
+          schema:
+            $ref: "#/definitions/loanResponse"
+      deprecated: false
+      parameters:
+      - name: "loanAmount"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "MRO 금액"
+        format: "int32"
+      - name: "annualInterestRate"
+        type: "number"
+        required: true
+        in: "query"
+        description: "이자율"
+        format: "float"
+      - name: "termInMonths"
+        type: "integer"
+        required: true
+        in: "query"
+        description: "기간"
+        format: "int32"
+securityDefinitions:
+  clientID:
+    description: ""
+    in: "header"
+    name: "X-IBM-Client-Id"
+    type: "apiKey"
+security:
+- clientID: []
+x-ibm-configuration:
+  assembly:
+    execute:
+    - activity-log:
+        title: "activity-log"
+        content: "payload"
+        error-content: "payload"
+    - operation-switch:
+        title: "operation-switch"
+        case:
+        - operations:
+          - verb: "get"
+            path: "/call"
+          execute:
+          - invoke:
+              target-url: "http://192.168.225.1:8080/loans/v1/quote?loanAmount={loanAmount}&annualInterestRate={annualInterestRate}&termInMonths={termInMonths}"
+              title: "invoke_loan"
+              description: ""
+        - operations:
+          - verb: "post"
+            path: "/validCall"
+          execute:
+          - validate:
+              title: "validate"
+              definition: "request"
+          - invoke:
+              target-url: "http://192.168.225.1:8080/loans/v1/quote?loanAmount=$(request.body.loanAmount)&annualInterestRate=$(request.body.annualInterestRate)&termInMonths=$(request.body.termInMonths)"
+              title: "invoke_loan2"
+              description: ""
+              verb: "GET"
+        - operations:
+          - verb: "get"
+            path: "/removeCall"
+          execute:
+          - invoke:
+              target-url: "http://192.168.225.1:8080/loans/v1/quote?loanAmount={loanAmount}&annualInterestRate={annualInterestRate}&termInMonths={termInMonths}"
+              title: "invoke_loan"
+              description: ""
+              verb: "GET"
+          - redact:
+              title: "redact"
+              actions:
+              - action: "redact"
+                from:
+                - "all"
+                path: "//*[@name='annualInterestRate']"
+        - operations:
+          - verb: "get"
+            path: "/addCall"
+          execute:
+          - invoke:
+              target-url: "http://192.168.225.1:8080/loans/v1/quote?loanAmount={loanAmount}&annualInterestRate={annualInterestRate}&termInMonths={termInMonths}"
+              title: "invoke_loan"
+              description: ""
+              verb: "GET"
+              output: "resMap"
+          - map:
+              title: "map"
+              inputs:
+                input:
+                  schema:
+                    $ref: "#/definitions/loanResponse"
+                  variable: "resMap.body"
+                  content: "application/json"
+              outputs:
+                output:
+                  schema:
+                    $ref: "#/definitions/loanResponse"
+                  variable: "message.body"
+                  content: "application/json"
+              actions:
+              - set: "output.loanAmount"
+                from: "input.loanAmount"
+              - set: "output.termInMonths"
+                from: "input.termInMonths"
+              - set: "output.monthlyPaymentAmount"
+                from: "input.monthlyPaymentAmount"
+                value: "Math.round($(input.monthlyPaymentAmount));"
+          - gatewayscript:
+              title: "gatewayscript"
+              source: "apim.readInputAsJSON(function (error,buffer) {\r\n    if (error)\
+                \ {\r\n       session.reject(\"Failed to read data in JSON format\"\
+                \ + error);\r\n   } else {\r\n       buffer.newElement = '테스트';\r\n\
+                \       console.error('buffer : ' + JSON.stringify(buffer));\r\n \
+                \      session.output.write(buffer);\r\n       apim.output('application/json');\r\
+                \n   } \r\n});\r\n"
+        - operations:
+          - verb: "get"
+            path: "/encryptCall"
+          execute:
+          - set-variable:
+              title: "set-variable"
+              actions:
+              - value: "{   \"alg\": \"HS256\",   \"kty\": \"oct\",   \"use\": \"\
+                  enc\",   \"k\": \"Ip-uafbjqrPZVPP2p_8u3Es6qT9LP4Q3EH-Dh9AlhR4\"\
+                  ,   \"kid\": \"test\" }"
+                add: "shared-key01"
+          - invoke:
+              target-url: "http://192.168.225.1:8080/loans/v1/quote?loanAmount={loanAmount}&annualInterestRate={annualInterestRate}&termInMonths={termInMonths}"
+              title: "invoke_loan"
+              description: ""
+              verb: "GET"
+          - gatewayscript:
+              title: "gatewayscript"
+              source: "var jwk = require('jwk');\r\nvar jose = require('jose');\r\n\
+                \r\n// get the input from the request\r\n\r\napim.readInputAsJSON(function(readAsBufferError,\
+                \ jsonData) {\r\n    if (readAsBufferError) {\r\n        console.error('Error\
+                \ on readAsBuffer: ' + readAsBufferError);\r\n    } else {\r\n   \
+                \     var plaintext = jsonData.annualInterestRate.toString();\r\n\
+                \        try {\r\n            //--------------------------------------------------------------------------\r\
+                \n            // Example: JWE Object Compact Serialization Format\r\
+                \n            //--------------------------------------------------------------------------\r\
+                \n            // Create a jweHeader object and specify the encryption\
+                \ algorithm to use\r\n            var jweHdr = jose.createJWEHeader('A128CBC-HS256');\r\
+                \n            \r\n            // Set the algorithm header parameter\
+                \ in the protected header\r\n            jweHdr.setProtected('alg',\
+                \ 'dir');\r\n\r\n            // Set the key configuration object to\
+                \ process the encrypted key\r\n            //jweHdr.setKey('JWEKey');\r\
+                \n            //jweHdr.setKey('hex:B35D87109E0520434B3F976CCE42477AB6A486FFEEB5F096694F5CD5B2C74E1E');\r\
+                \n            //jweHdr.setKey(\"Alice\");\r\n            var sharedkey\
+                \ = JSON.parse(apim.getvariable('shared-key01'));\r\n            jweHdr.setKey(jwk.toBuffer(sharedkey));\r\
+                \n\r\n            // Specify which jweHeader defines how to encrypt\
+                \ this message then\r\n            // update the jweEncrypter with\
+                \ the message to be encrypted then\r\n            // encrypt the JWE\
+                \ Encryption object using the compact serialization\r\n          \
+                \  // output_format as specified\r\n            jose.createJWEEncrypter(jweHdr).update(plaintext).encrypt('compact',\
+                \ function(error, jweCompactObj) {\r\n                if (error) {\r\
+                \n                    // An error occurred during the encrypt process\
+                \ and is passed back\r\n                    // via the error parameter\
+                \ since .encrypt is an asynchronous call\r\n                    //\
+                \ write the error to the output context\r\n                    session.reject(error);\r\
+                \n                    return;\r\n                } else {\r\n    \
+                \                //console.error('jweCompactObj : ' + JSON.stringify(jweCompactObj));\r\
+                \n                    jsonData.annualInterestRate = jweCompactObj;\r\
+                \n                    apim.output('application/json');\r\n       \
+                \             session.output.write(jsonData);\r\n                }\r\
+                \n            }); // encrypt function\r\n        } catch (e) {\r\n\
+                \            session.reject(\"jwe-encrypt-compact.js error: \" + e);\r\
+                \n            return;\r\n        }\r\n    }\r\n}); // readAsBuffer\r\
+                \n"
+        - operations:
+          - verb: "put"
+            path: "/decryptCall"
+          execute:
+          - set-variable:
+              title: "set-variable"
+              actions:
+              - value: "{   \"alg\": \"HS256\",   \"kty\": \"oct\",   \"use\": \"\
+                  enc\",   \"k\": \"Ip-uafbjqrPZVPP2p_8u3Es6qT9LP4Q3EH-Dh9AlhR4\"\
+                  ,   \"kid\": \"test\" }"
+                add: "shared-key01"
+          - gatewayscript:
+              title: "gatewayscript"
+              source: "var jwk = require('jwk');\r\nvar jose = require('jose');\r\n\
+                \r\n// get the input from the request sent\r\napim.readInputAsJSON(function(readAsBufferError,\
+                \ jsonData) {\r\n    if (readAsBufferError) {\r\n        console.error('Error\
+                \ on readAsBufferError: ' + readAsBufferError);\r\n    } else {\r\n\
+                \        var jweCompactObj = jsonData.annualInterestRate;\r\n    \
+                \    //var jweCompactObj = jsonData;\r\n        try {\r\n\r\n    \
+                \        // Parse the JWE representation to extract the serialized\
+                \ values for\r\n            // the components of the JWE.  Returns\
+                \ an instance of JWEObject\r\n            // through which you can\
+                \ access the JWE content.\r\n            var jweObj = jose.parse(jweCompactObj);\r\
+                \n            console.error('JSON.stringify(jweObj) : ' + JSON.stringify(jweObj));\r\
+                \n\r\n            // Set key configuration object to process the encrypted\
+                \ key\r\n            var sharedkey = JSON.parse(apim.getvariable('shared-key01'));\r\
+                \n            jweObj.setKey(jwk.toBuffer(sharedkey));\r\n        \
+                \    \r\n            // The decrypt will only be attempted if key\
+                \ has been specified\r\n            jose.createJWEDecrypter(jweObj).decrypt(function(error,\
+                \ plaintext) {\r\n                if (error) {\r\n               \
+                \     // An error occurred during the decrypt process and is passed\
+                \ back\r\n                    // via the error parameter since .decrypt\
+                \ is an asynchronous call\r\n                    // write the error\
+                \ to the output context\r\n                    session.reject(error);\r\
+                \n                    return;\r\n                } else {\r\n    \
+                \                // since the decryption was successful you can write\
+                \ the\r\n                    // plaintext to the output context\r\n\
+                \                    jsonData.annualInterestRate = Number(plaintext);\r\
+                \n                    session.output.write(JSON.stringify(jsonData));\r\
+                \n                    apim.output('application/json');\r\n       \
+                \         }\r\n            }); // decrypt function\r\n\r\n       \
+                \ } catch (e) {\r\n            session.reject(\"jwe-decrypt.js error:\
+                \ \" + e);\r\n            return;\r\n        }\r\n\r\n}});\r\n"
+          - invoke:
+              target-url: "http://192.168.225.1:8080/loans/v1/quote?loanAmount=$(message.body.loanAmount)&annualInterestRate=$(message.body.annualInterestRate)&termInMonths=$(message.body.termInMonths)"
+              title: "invoke_loan3"
+              description: ""
+              verb: "GET"
+        - operations:
+          - verb: "get"
+            path: "/returnXML"
+          execute:
+          - invoke:
+              target-url: "http://192.168.225.1:8080/loans/v1/quote?loanAmount={loanAmount}&annualInterestRate={annualInterestRate}&termInMonths={termInMonths}"
+              title: "invoke_loan"
+              description: ""
+          - json-to-xml:
+              title: "json-to-xml"
+              root-element-name: "json"
+              always-output-root-element: false
+        otherwise: []
+  enforced: true
+  testable: true
+  phase: "realized"
+  cors:
+    enabled: true
+  gateway: "datapower-gateway"
+  categories:
+  - "/USA/MRO"
+  - "/Korea/MRO"
+externalDocs:
+  description: "상세 가이드는 해당 링크 참고"
+  url: "http://192.168.225.10:9071/test/APIC5_guide_03_Assemble_juwlee201606_v1.doc"
+schemes:
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+- "application/xml"
+definitions:
+  loanResponse:
+    properties:
+      loanAmount:
+        type: "integer"
+        format: "int32"
+        example: 10000
+      annualInterestRate:
+        type: "number"
+        format: "float"
+        example: 0.1
+      termInMonths:
+        type: "integer"
+        format: "int32"
+        example: 52
+      monthlyPaymentAmount:
+        type: "number"
+        format: "float"
+        example: 123.45
+    required:
+    - "loanAmount"
+    - "termInMonths"
+    - "monthlyPaymentAmount"
+    additionalProperties: false
+  requestLoan:
+    properties:
+      loanAmount:
+        type: "integer"
+        format: "int32"
+        example: 10000
+        minimum: 0
+      annualInterestRate:
+        type: "number"
+        format: "float"
+        example: 0.1
+      termInMonths:
+        type: "integer"
+        format: "int32"
+        example: 52
+    required:
+    - "loanAmount"
+    - "annualInterestRate"
+    - "termInMonths"
+    additionalProperties: true
