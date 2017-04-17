@@ -13,7 +13,8 @@
 |LoanTest.zip|API 호출 대상이 되는 간단한 샘플 App|JAX-RS 샘플 App|
 
 
-testapi_1.0.0.yaml
 
-![testapi_1.0.0.yaml](/images/testapi.jpg)
+ > testapi_1.0.0.yaml
+ > ![testapi_1.0.0.yaml](./images/testapi.jpg)
+ 
   
