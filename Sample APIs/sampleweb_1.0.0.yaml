@@ -1,0 +1,689 @@
+---
+swagger: "2.0"
+info:
+  x-ibm-name: "sampleweb"
+  title: "SampleWeb"
+  version: "1.0.0"
+schemes:
+- "https"
+host: "$(catalog.host)"
+basePath: "/sampleweb"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+securityDefinitions:
+  clientIdHeader:
+    type: "apiKey"
+    in: "header"
+    name: "X-IBM-Client-Id"
+security:
+- clientIdHeader: []
+x-ibm-configuration:
+  testable: true
+  enforced: true
+  cors:
+    enabled: true
+  assembly:
+    execute:
+    - operation-switch:
+        title: "operation-switch"
+        case:
+        - operations:
+          - verb: "get"
+            path: "/call"
+          execute:
+          - map:
+              title: "getHello: input"
+              inputs:
+                input:
+                  schema:
+                    $ref: "#/definitions/requestVar"
+                  variable: "request.parameters"
+                  content: "application/json"
+              outputs:
+                body:
+                  schema:
+                    $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getHelloInput"
+                  variable: "message.body"
+                  content: "application/xml"
+                content-type:
+                  schema:
+                    type: "string"
+                  variable: "message.headers.content-type"
+                SOAPAction:
+                  schema:
+                    type: "string"
+                  variable: "message.headers.SOAPAction"
+              actions:
+              - set: "content-type"
+                default: "text/xml"
+              - set: "SOAPAction"
+              - set: "body.Envelope.Body.getHello.arg0"
+                from: "input.name"
+              - set: "body.Envelope.Body.getHello.arg1"
+                from: "input.company"
+          - invoke:
+              title: "getHello: invoke"
+              target-url: "http://192.168.225.1:8080/SampleWeb/HelloWebService"
+              timeout: 60
+              verb: "POST"
+              cache-response: "protocol"
+              cache-ttl: 900
+              output: "getHelloOut"
+          - map:
+              title: "getHello: output"
+              inputs:
+                input:
+                  schema:
+                    $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getHelloOutput"
+                  variable: "getHelloOut.body"
+                  content: "application/xml"
+              outputs:
+                output:
+                  schema:
+                    $ref: "#/definitions/responseString"
+                  variable: "message.body"
+                  content: "application/json"
+              actions:
+              - set: "output.res"
+                from: "input.Envelope.Body.getHelloResponse.return"
+        otherwise: []
+        version: "1.0.0"
+  phase: "realized"
+  targets:
+    HelloWebService:
+      swagger: "2.0"
+      info:
+        title: "HelloWebService"
+        description: ""
+        x-ibm-name: "hellowebservice"
+        version: "1.0.0"
+      schemes:
+      - "https"
+      basePath: "/HelloWebService"
+      produces:
+      - "application/xml"
+      consumes:
+      - "text/xml"
+      securityDefinitions:
+        clientID:
+          type: "apiKey"
+          name: "X-IBM-Client-Id"
+          in: "header"
+          description: ""
+      security:
+      - clientID: []
+      x-ibm-configuration:
+        type: "wsdl"
+        wsdl-definition:
+          wsdl: "58ee2d99e4b01a1d864cf345"
+          service: "HelloWebService"
+          port: "HelloWebPort"
+          soap-version: "1.1"
+        assembly:
+          execute:
+          - proxy:
+              title: "proxy"
+              target-url: "http://192.168.225.1:8080/SampleWeb/HelloWebService"
+        gateway: "datapower-gateway"
+        enforced: true
+        testable: true
+        phase: "realized"
+        cors:
+          enabled: true
+      paths:
+        /getCompany:
+          post:
+            summary: "Operation getCompany"
+            description: ""
+            operationId: "getCompany"
+            x-ibm-soap:
+              soap-action: ""
+              soap-operation: "{http://jaxws.juwlee.ibm.com/}getCompany"
+            parameters:
+            - in: "body"
+              name: "body"
+              required: true
+              schema:
+                $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getCompanyInput"
+            responses:
+              default:
+                description: ""
+                schema:
+                  $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getCompanyOutput"
+        /setCompany:
+          post:
+            summary: "Operation setCompany"
+            description: ""
+            operationId: "setCompany"
+            x-ibm-soap:
+              soap-action: ""
+              soap-operation: "{http://jaxws.juwlee.ibm.com/}setCompany"
+            parameters:
+            - in: "body"
+              name: "body"
+              required: true
+              schema:
+                $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/setCompanyInput"
+            responses:
+              default:
+                description: ""
+                schema:
+                  $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/setCompanyOutput"
+        /getName:
+          post:
+            summary: "Operation getName"
+            description: ""
+            operationId: "getName"
+            x-ibm-soap:
+              soap-action: ""
+              soap-operation: "{http://jaxws.juwlee.ibm.com/}getName"
+            parameters:
+            - in: "body"
+              name: "body"
+              required: true
+              schema:
+                $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getNameInput"
+            responses:
+              default:
+                description: ""
+                schema:
+                  $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getNameOutput"
+        /toString:
+          post:
+            summary: "Operation toString"
+            description: ""
+            operationId: "toString"
+            x-ibm-soap:
+              soap-action: ""
+              soap-operation: "{http://jaxws.juwlee.ibm.com/}toString"
+            parameters:
+            - in: "body"
+              name: "body"
+              required: true
+              schema:
+                $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/toStringInput"
+            responses:
+              default:
+                description: ""
+                schema:
+                  $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/toStringOutput"
+        /setName:
+          post:
+            summary: "Operation setName"
+            description: ""
+            operationId: "setName"
+            x-ibm-soap:
+              soap-action: ""
+              soap-operation: "{http://jaxws.juwlee.ibm.com/}setName"
+            parameters:
+            - in: "body"
+              name: "body"
+              required: true
+              schema:
+                $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/setNameInput"
+            responses:
+              default:
+                description: ""
+                schema:
+                  $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/setNameOutput"
+        /getHello:
+          post:
+            summary: "Operation getHello"
+            description: ""
+            operationId: "getHello"
+            x-ibm-soap:
+              soap-action: ""
+              soap-operation: "{http://jaxws.juwlee.ibm.com/}getHello"
+            parameters:
+            - in: "body"
+              name: "body"
+              required: true
+              schema:
+                $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getHelloInput"
+            responses:
+              default:
+                description: ""
+                schema:
+                  $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getHelloOutput"
+      definitions:
+        Security:
+          xml:
+            namespace: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+            prefix: "wsse"
+          type: "object"
+          properties:
+            UsernameToken:
+              type: "object"
+              properties:
+                Username:
+                  type: "string"
+                Password:
+                  type: "string"
+        getCompanyInput:
+          type: "object"
+          properties:
+            Envelope:
+              xml:
+                prefix: "soap-env"
+                namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+              type: "object"
+              properties:
+                Header:
+                  $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getCompanyHeader"
+                Body:
+                  type: "object"
+                  properties:
+                    getCompany:
+                      $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getCompany_tns"
+          example: "\n<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\"\
+            >\n <soap-env:Header>\n  <wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\"\
+            >\n   <UsernameToken>\n    <Username>string</Username>\n    <Password>string</Password>\n\
+            \   </UsernameToken>\n  </wsse:Security>\n </soap-env:Header>\n <soap-env:Body>\n\
+            \  <tns:getCompany xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"></tns:getCompany>\n\
+            \ </soap-env:Body>\n</soap-env:Envelope>"
+        getCompanyHeader:
+          type: "object"
+          properties:
+            Security:
+              $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/Security"
+        getCompanyOutput:
+          type: "object"
+          properties:
+            Envelope:
+              xml:
+                prefix: "soap-env"
+                namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+              type: "object"
+              properties:
+                Body:
+                  type: "object"
+                  properties:
+                    getCompanyResponse:
+                      $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getCompanyResponse_tns"
+          example: "\n<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\"\
+            >\n <soap-env:Body>\n  <tns:getCompanyResponse xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"\
+            >\n   <return>string</return>\n  </tns:getCompanyResponse>\n </soap-env:Body>\n\
+            </soap-env:Envelope>"
+        setCompanyInput:
+          type: "object"
+          properties:
+            Envelope:
+              xml:
+                prefix: "soap-env"
+                namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+              type: "object"
+              properties:
+                Header:
+                  $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/setCompanyHeader"
+                Body:
+                  type: "object"
+                  properties:
+                    setCompany:
+                      $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/setCompany_tns"
+          example: "\n<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\"\
+            >\n <soap-env:Header>\n  <wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\"\
+            >\n   <UsernameToken>\n    <Username>string</Username>\n    <Password>string</Password>\n\
+            \   </UsernameToken>\n  </wsse:Security>\n </soap-env:Header>\n <soap-env:Body>\n\
+            \  <tns:setCompany xmlns:tns=\"http://jaxws.juwlee.ibm.com/\">\n   <arg0>string</arg0>\n\
+            \  </tns:setCompany>\n </soap-env:Body>\n</soap-env:Envelope>"
+        setCompanyHeader:
+          type: "object"
+          properties:
+            Security:
+              $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/Security"
+        setCompanyOutput:
+          type: "object"
+          properties:
+            Envelope:
+              xml:
+                prefix: "soap-env"
+                namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+              type: "object"
+              properties:
+                Body:
+                  type: "object"
+                  properties:
+                    setCompanyResponse:
+                      $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/setCompanyResponse_tns"
+          example: "\n<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\"\
+            >\n <soap-env:Body>\n  <tns:setCompanyResponse xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"\
+            ></tns:setCompanyResponse>\n </soap-env:Body>\n</soap-env:Envelope>"
+        getNameInput:
+          type: "object"
+          properties:
+            Envelope:
+              xml:
+                prefix: "soap-env"
+                namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+              type: "object"
+              properties:
+                Header:
+                  $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getNameHeader"
+                Body:
+                  type: "object"
+                  properties:
+                    getName:
+                      $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getName_tns"
+          example: "\n<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\"\
+            >\n <soap-env:Header>\n  <wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\"\
+            >\n   <UsernameToken>\n    <Username>string</Username>\n    <Password>string</Password>\n\
+            \   </UsernameToken>\n  </wsse:Security>\n </soap-env:Header>\n <soap-env:Body>\n\
+            \  <tns:getName xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"></tns:getName>\n\
+            \ </soap-env:Body>\n</soap-env:Envelope>"
+        getNameHeader:
+          type: "object"
+          properties:
+            Security:
+              $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/Security"
+        getNameOutput:
+          type: "object"
+          properties:
+            Envelope:
+              xml:
+                prefix: "soap-env"
+                namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+              type: "object"
+              properties:
+                Body:
+                  type: "object"
+                  properties:
+                    getNameResponse:
+                      $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getNameResponse_tns"
+          example: "\n<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\"\
+            >\n <soap-env:Body>\n  <tns:getNameResponse xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"\
+            >\n   <return>string</return>\n  </tns:getNameResponse>\n </soap-env:Body>\n\
+            </soap-env:Envelope>"
+        toStringInput:
+          type: "object"
+          properties:
+            Envelope:
+              xml:
+                prefix: "soap-env"
+                namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+              type: "object"
+              properties:
+                Header:
+                  $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/toStringHeader"
+                Body:
+                  type: "object"
+                  properties:
+                    toString:
+                      $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/toString_tns"
+          example: "\n<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\"\
+            >\n <soap-env:Header>\n  <wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\"\
+            >\n   <UsernameToken>\n    <Username>string</Username>\n    <Password>string</Password>\n\
+            \   </UsernameToken>\n  </wsse:Security>\n </soap-env:Header>\n <soap-env:Body>\n\
+            \  <tns:toString xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"></tns:toString>\n\
+            \ </soap-env:Body>\n</soap-env:Envelope>"
+        toStringHeader:
+          type: "object"
+          properties:
+            Security:
+              $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/Security"
+        toStringOutput:
+          type: "object"
+          properties:
+            Envelope:
+              xml:
+                prefix: "soap-env"
+                namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+              type: "object"
+              properties:
+                Body:
+                  type: "object"
+                  properties:
+                    toStringResponse:
+                      $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/toStringResponse_tns"
+          example: "\n<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\"\
+            >\n <soap-env:Body>\n  <tns:toStringResponse xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"\
+            >\n   <return>string</return>\n  </tns:toStringResponse>\n </soap-env:Body>\n\
+            </soap-env:Envelope>"
+        setNameInput:
+          type: "object"
+          properties:
+            Envelope:
+              xml:
+                prefix: "soap-env"
+                namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+              type: "object"
+              properties:
+                Header:
+                  $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/setNameHeader"
+                Body:
+                  type: "object"
+                  properties:
+                    setName:
+                      $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/setName_tns"
+          example: "\n<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\"\
+            >\n <soap-env:Header>\n  <wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\"\
+            >\n   <UsernameToken>\n    <Username>string</Username>\n    <Password>string</Password>\n\
+            \   </UsernameToken>\n  </wsse:Security>\n </soap-env:Header>\n <soap-env:Body>\n\
+            \  <tns:setName xmlns:tns=\"http://jaxws.juwlee.ibm.com/\">\n   <arg0>string</arg0>\n\
+            \  </tns:setName>\n </soap-env:Body>\n</soap-env:Envelope>"
+        setNameHeader:
+          type: "object"
+          properties:
+            Security:
+              $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/Security"
+        setNameOutput:
+          type: "object"
+          properties:
+            Envelope:
+              xml:
+                prefix: "soap-env"
+                namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+              type: "object"
+              properties:
+                Body:
+                  type: "object"
+                  properties:
+                    setNameResponse:
+                      $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/setNameResponse_tns"
+          example: "\n<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\"\
+            >\n <soap-env:Body>\n  <tns:setNameResponse xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"\
+            ></tns:setNameResponse>\n </soap-env:Body>\n</soap-env:Envelope>"
+        getHelloInput:
+          type: "object"
+          properties:
+            Envelope:
+              xml:
+                prefix: "soap-env"
+                namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+              type: "object"
+              properties:
+                Header:
+                  $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getHelloHeader"
+                Body:
+                  type: "object"
+                  properties:
+                    getHello:
+                      $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getHello_tns"
+          example: "\n<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\"\
+            >\n <soap-env:Header>\n  <wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\"\
+            >\n   <UsernameToken>\n    <Username>string</Username>\n    <Password>string</Password>\n\
+            \   </UsernameToken>\n  </wsse:Security>\n </soap-env:Header>\n <soap-env:Body>\n\
+            \  <tns:getHello xmlns:tns=\"http://jaxws.juwlee.ibm.com/\">\n   <arg0>string</arg0>\n\
+            \   <arg1>string</arg1>\n  </tns:getHello>\n </soap-env:Body>\n</soap-env:Envelope>"
+        getHelloHeader:
+          type: "object"
+          properties:
+            Security:
+              $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/Security"
+        getHelloOutput:
+          type: "object"
+          properties:
+            Envelope:
+              xml:
+                prefix: "soap-env"
+                namespace: "http://schemas.xmlsoap.org/soap/envelope/"
+              type: "object"
+              properties:
+                Body:
+                  type: "object"
+                  properties:
+                    getHelloResponse:
+                      $ref: "#/x-ibm-configuration/targets/HelloWebService/definitions/getHelloResponse_tns"
+          example: "\n<soap-env:Envelope xmlns:soap-env=\"http://schemas.xmlsoap.org/soap/envelope/\"\
+            >\n <soap-env:Body>\n  <tns:getHelloResponse xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"\
+            >\n   <return>string</return>\n  </tns:getHelloResponse>\n </soap-env:Body>\n\
+            </soap-env:Envelope>"
+        getCompany_tns:
+          xml:
+            namespace: "http://jaxws.juwlee.ibm.com/"
+            prefix: "tns"
+          type: "object"
+          properties: {}
+          example: "\n<tns:getCompany xmlns:tns=\"http://jaxws.juwlee.ibm.com/\">\n\
+            </tns:getCompany>"
+        getCompanyResponse_tns:
+          xml:
+            namespace: "http://jaxws.juwlee.ibm.com/"
+            prefix: "tns"
+          type: "object"
+          properties:
+            return:
+              type: "string"
+              xml:
+                namespace: ""
+          example: "\n<tns:getCompanyResponse xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"\
+            >\n <return>string</return>\n</tns:getCompanyResponse>"
+        setCompany_tns:
+          xml:
+            namespace: "http://jaxws.juwlee.ibm.com/"
+            prefix: "tns"
+          type: "object"
+          properties:
+            arg0:
+              type: "string"
+              xml:
+                namespace: ""
+          example: "\n<tns:setCompany xmlns:tns=\"http://jaxws.juwlee.ibm.com/\">\n\
+            \ <arg0>string</arg0>\n</tns:setCompany>"
+        setCompanyResponse_tns:
+          xml:
+            namespace: "http://jaxws.juwlee.ibm.com/"
+            prefix: "tns"
+          type: "object"
+          properties: {}
+          example: "\n<tns:setCompanyResponse xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"\
+            >\n</tns:setCompanyResponse>"
+        getName_tns:
+          xml:
+            namespace: "http://jaxws.juwlee.ibm.com/"
+            prefix: "tns"
+          type: "object"
+          properties: {}
+          example: "\n<tns:getName xmlns:tns=\"http://jaxws.juwlee.ibm.com/\">\n</tns:getName>"
+        getNameResponse_tns:
+          xml:
+            namespace: "http://jaxws.juwlee.ibm.com/"
+            prefix: "tns"
+          type: "object"
+          properties:
+            return:
+              type: "string"
+              xml:
+                namespace: ""
+          example: "\n<tns:getNameResponse xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"\
+            >\n <return>string</return>\n</tns:getNameResponse>"
+        toString_tns:
+          xml:
+            namespace: "http://jaxws.juwlee.ibm.com/"
+            prefix: "tns"
+          type: "object"
+          properties: {}
+          example: "\n<tns:toString xmlns:tns=\"http://jaxws.juwlee.ibm.com/\">\n\
+            </tns:toString>"
+        toStringResponse_tns:
+          xml:
+            namespace: "http://jaxws.juwlee.ibm.com/"
+            prefix: "tns"
+          type: "object"
+          properties:
+            return:
+              type: "string"
+              xml:
+                namespace: ""
+          example: "\n<tns:toStringResponse xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"\
+            >\n <return>string</return>\n</tns:toStringResponse>"
+        setName_tns:
+          xml:
+            namespace: "http://jaxws.juwlee.ibm.com/"
+            prefix: "tns"
+          type: "object"
+          properties:
+            arg0:
+              type: "string"
+              xml:
+                namespace: ""
+          example: "\n<tns:setName xmlns:tns=\"http://jaxws.juwlee.ibm.com/\">\n <arg0>string</arg0>\n\
+            </tns:setName>"
+        setNameResponse_tns:
+          xml:
+            namespace: "http://jaxws.juwlee.ibm.com/"
+            prefix: "tns"
+          type: "object"
+          properties: {}
+          example: "\n<tns:setNameResponse xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"\
+            >\n</tns:setNameResponse>"
+        getHello_tns:
+          xml:
+            namespace: "http://jaxws.juwlee.ibm.com/"
+            prefix: "tns"
+          type: "object"
+          properties:
+            arg0:
+              type: "string"
+              xml:
+                namespace: ""
+            arg1:
+              type: "string"
+              xml:
+                namespace: ""
+          example: "\n<tns:getHello xmlns:tns=\"http://jaxws.juwlee.ibm.com/\">\n\
+            \ <arg0>string</arg0>\n <arg1>string</arg1>\n</tns:getHello>"
+        getHelloResponse_tns:
+          xml:
+            namespace: "http://jaxws.juwlee.ibm.com/"
+            prefix: "tns"
+          type: "object"
+          properties:
+            return:
+              type: "string"
+              xml:
+                namespace: ""
+          example: "\n<tns:getHelloResponse xmlns:tns=\"http://jaxws.juwlee.ibm.com/\"\
+            >\n <return>string</return>\n</tns:getHelloResponse>"
+paths:
+  /call:
+    get:
+      responses:
+        200:
+          description: "200 OK"
+      parameters:
+      - name: "name"
+        type: "string"
+        required: false
+        in: "query"
+        description: "name"
+      - name: "company"
+        type: "string"
+        required: false
+        in: "query"
+        description: "company"
+definitions:
+  responseString:
+    properties:
+      res:
+        type: "string"
+    additionalProperties: false
+  requestVar:
+    properties:
+      name:
+        type: "string"
+      company:
+        type: "string"
+    additionalProperties: false
+tags: []
