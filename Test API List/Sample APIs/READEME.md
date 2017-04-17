@@ -3,6 +3,7 @@
 
 > **[참고]** IBM API Connect 의 샘플 API 를 공유하는 공간입니다. 샘플 API 는 Open API 표준(Swagger 2.0)기반으로 작성되었습니다. 
 
+
  
 |파일명|제공내용|기타|
 |:---:|:---:|:---:|
@@ -17,5 +18,11 @@
  > testapi_1.0.0.yaml
  
  ![testapi_1.0.0.yaml](./images/testapi.jpg)
+
+
+ > testloan_2.0.0.yaml
+ 
+ ![testloan_2.0.0.yaml](./images/testloan.jpg)
+
 
   
