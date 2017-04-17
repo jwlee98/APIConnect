@@ -28,4 +28,5 @@
 
 |폴더명|제공내용|기타|
 |:---:|:---:|:---:|
-|Test API List|바로 테스트/참고 가능한 API|다양한 Assemble 기능 사용 가이드|
+|APIC_Lectures|IBM API Connect 관련 강좌|한글 강좌|
+|Sample APIs|바로 테스트/참고 가능한 API|다양한 Assemble 기능 사용 가이드|
