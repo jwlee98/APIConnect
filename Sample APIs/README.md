@@ -34,7 +34,9 @@
  ![sampleweb_1.0.0.yaml](./images/webservice.jpg)
 
   > versioncall_1.0.0.yaml
+  >
   > 사용자 정의 정책 사용 - ip-validate-policy.zip
+  >
   > ip-validate : 특정 IP 의 사용자만 호출을 허용
 
  ![versioncall_1.0.0.yaml](./images/userpolicy.png)
@@ -44,6 +46,8 @@
 
 
  > oauth-2leg_1.0.0.yaml
+ >
+ > 테스트 API 로서 authtest3_3.0.0.yaml 에서 사용
  >
  > OAuth 2.0 보안 정의 - Confidential, Password flow, refresh token, revocation
 
